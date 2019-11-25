@@ -6,6 +6,7 @@
 
 # project
 logs/
+data/
 
 # python
 # Byte-compiled / optimized / DLL files

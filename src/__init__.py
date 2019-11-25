@@ -9,4 +9,5 @@ if os.environ.get('PROJECT_HOME') is None:
 if os.environ.get('DATA_PATH') is None:
     DATA_PATH = os.path.join(os.environ.get('PROJECT_HOME'), 'data')
     os.environ.setdefault("DATA_PATH", DATA_PATH)
-os.makedirs(os.environ.get('DATA_PATH'))
+if not os.path.exists(os.environ.get('DATA_PATH')):
+    os.makedirs(os.environ.get('DATA_PATH'))

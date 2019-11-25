@@ -32,7 +32,7 @@ def crawling_overview():
     爬取上市股票概览数据
     """
     num = 60
-    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=" + num + "&sort=&asc=0&market=&id="
+    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=" + str(num) + "&sort=&asc=0&market=&id="
     total_count = get_stock_num(url)
     page_count = math.ceil(total_count / num)
     logger.info(f'total count: {total_count}')
@@ -51,7 +51,7 @@ def crawling_overview():
         data = json_obj['data']
         total_data.extend(data)
         logger.info(f'processing page:{i + 1}')
-    return data
+    return total_data
 
 
 def crawling_detail(data):
@@ -121,7 +121,7 @@ def daemon(do=False):
     # 每天早上18点运行
     if hour == 18 and minute == 0:
         main()
-    timer = threading.Timer(60, main)
+    timer = threading.Timer(60, daemon)
     timer.start()
 
 
