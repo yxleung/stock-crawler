@@ -6,7 +6,9 @@ import random
 import string
 import datetime
 import requests
+import threading
 from tqdm import tqdm
+from src.config import logger
 
 
 def get_stock_num(url):
@@ -29,11 +31,12 @@ def crawling_overview():
     """
     爬取上市股票概览数据
     """
-    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=60&sort=&asc=0&market=&id="
+    num = 60
+    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=" + num + "&sort=&asc=0&market=&id="
     total_count = get_stock_num(url)
-    page_count = math.ceil(total_count / 60)
-    print(f'total count: {total_count}')
-    print(f'page_count: {page_count}')
+    page_count = math.ceil(total_count / num)
+    logger.info(f'total count: {total_count}')
+    logger.info(f'page_count: {page_count}')
     total_data = []
     for i in range(page_count):
         random_str = ''.join(random.sample(string.ascii_letters + string.digits, 16))
@@ -47,7 +50,7 @@ def crawling_overview():
         json_obj = json.loads(text[start:end])
         data = json_obj['data']
         total_data.extend(data)
-        print(f'processing page:{i + 1}')
+        logger.info(f'processing page:{i + 1}')
     return data
 
 
@@ -84,9 +87,11 @@ def get_latest_update_time():
 
 
 def main():
+    logger.info('start crawling.')
     data_path = os.environ.get('DATA_PATH')
 
     dt = get_latest_update_time().strftime('%Y-%m-%d_%H:%M:%S')
+    logger.info(f'data dt:{dt}')
     partition = os.path.join(data_path, dt.split('_')[0])
     if not os.path.exists(partition):
         os.mkdir(partition)
@@ -104,6 +109,20 @@ def main():
     with open(detail_file, 'w+', encoding='utf-8') as f:
         for i in detail_data:
             f.write(f'{i[0]}\1{i[1]}\n')
+
+    logger.info('finish crawling.')
+
+
+def daemon(do=False):
+    """定时器"""
+    now = datetime.datetime.now()
+    minute = int(now.strftime("%M"))
+    hour = int(now.strftime('%H'))
+    # 每天早上18点运行
+    if hour == 18 and minute == 0:
+        main()
+    timer = threading.Timer(60, main)
+    timer.start()
 
 
 if __name__ == '__main__':
