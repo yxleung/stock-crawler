@@ -32,7 +32,8 @@ def crawling_overview():
     爬取上市股票概览数据
     """
     num = 60
-    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=" + str(num) + "&sort=&asc=0&market=&id="
+    url = "http://stock.finance.sina.com.cn/usstock/api/jsonp.php/IO.XSRV2.CallbackList['{}']/US_CategoryService.getList?page={}&num=" + str(
+        num) + "&sort=&asc=0&market=&id="
     total_count = get_stock_num(url)
     page_count = math.ceil(total_count / num)
     logger.info(f'total count: {total_count}')
@@ -63,12 +64,16 @@ def crawling_detail(data):
     for stock in tqdm(data, total=len(data)):
         symbol = stock['symbol'].lower()
         url = url.format(symbol, round(time.time() * 1000))
-        resp = requests.get(url)
-        text = resp.text.split('\n')[1]
-        start = text.find('(') + 1
-        end = -2
-        val = text[start:end]
-        result.append([symbol, val])
+        try:
+            resp = requests.get(url)
+            text = resp.text.split('\n')[1]
+            start = text.find('(') + 1
+            end = -2
+            val = text[start:end]
+            result.append([symbol, val])
+        except Exception as e:
+            logger.exception(e)
+            continue
     return result
 
 
