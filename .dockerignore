@@ -1,11 +1,18 @@
+# git
+.git
+.gitignore
+.dockerignore
+
 # idea
 .idea
 *.iml
 .DS_Store
-*.npy
 
 # project
 logs/
+models/
+tmp/
+doc/
 
 # python
 # Byte-compiled / optimized / DLL files
@@ -111,6 +118,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-# vscode
-.vscode
