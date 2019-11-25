@@ -124,7 +124,7 @@ def daemon(do=False):
     minute = int(now.strftime("%M"))
     hour = int(now.strftime('%H'))
     # 每天早上18点运行
-    if hour == 18 and minute == 0:
+    if hour == 8 and minute == 0:
         main()
     timer = threading.Timer(60, daemon)
     timer.start()
