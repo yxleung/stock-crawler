@@ -22,4 +22,4 @@ WORKDIR $PROJECT_HOME
 
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com -r requirements.txt
 
-ENTRYPOINT ["python3.7","src/main.py"]
+ENTRYPOINT ["python3.7","-u","src/main.py"]
