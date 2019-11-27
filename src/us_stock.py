@@ -108,12 +108,16 @@ def main():
     # 保持数据
     overview_file = os.path.join(partition, 'overview.json')
     detail_file = os.path.join(partition, 'detail.d')
+    last_update_time_file = os.path.join(partition, dt)
     with open(overview_file, 'w+', encoding='utf-8') as f:
         json.dump(overview_data, f, ensure_ascii=False)
 
     with open(detail_file, 'w+', encoding='utf-8') as f:
         for i in detail_data:
             f.write(f'{i[0]}\1{i[1]}\n')
+
+    with open(last_update_time_file, 'w+', encoding='utf-8') as f:
+        f.write(dt)
 
     logger.info('finish crawling.')
 
