@@ -92,6 +92,13 @@ def get_latest_update_time():
 
 
 def main():
+    # 判断是否在爬取时间
+    now = datetime.datetime.now()
+    hour = now.strftime('%H')
+    if hour <= '08' or hour >= '20':
+        logger.info('当前不是美股爬取时间')
+        return
+
     logger.info('start crawling.')
     data_path = os.environ.get('DATA_PATH')
 
@@ -127,9 +134,15 @@ def daemon(do=False):
     now = datetime.datetime.now()
     minute = int(now.strftime("%M"))
     hour = int(now.strftime('%H'))
-    # 每天早上18点运行
-    if hour == 8 and minute == 0:
-        main()
+    # 每天早上8点运行
+    if (hour == 8 and minute == 0) or do:
+        for _ in range(10):
+            try:
+                main()
+                break
+            except Exception as e:
+                logger.exception(e)
+                time.sleep(60 * 60)
     timer = threading.Timer(60, daemon)
     timer.start()
 
