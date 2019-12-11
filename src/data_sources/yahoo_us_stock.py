@@ -36,24 +36,33 @@ def download(dt=None):
             for j, stock in total_stocks.iterrows():
                 t1 = datetime.datetime.now()
 
-                # 下载分钟数据
-                df = yf.download(stock['symbol'], start=start, end=end, interval='1m', prepost=True, progress=False,
-                                 timeout=600)
-                for _, row in df.iterrows():
+                for try_cnt in range(10):
+                    try:
+                        # 下载分钟数据
+                        df_1m = yf.download(stock['symbol'], start=start, end=end, interval='1m', prepost=True,
+                                            progress=False, timeout=300, threads=False)
+                        # 下载天数据
+                        df_1d = yf.download(stock['symbol'], start=start, end=start, interval='1D', prepost=True,
+                                            progress=False, timeout=60, threads=False)
+                        break
+                    except Exception as e:
+                        logger.info(f"{stock['symbol']}第{try_cnt + 1}次下载失败")
+                        if try_cnt == 9:
+                            logger.exception(e)
+
+                for _, row in df_1m.iterrows():
                     fout_1m.write(
                         f"""{stock['symbol']}\1{row['Open']}\1{row['High']}\1{row['Low']}\1{row['Close']}\1{row[
                             'Adj Close']}\1{row['Volume']}\1{str(row.name)}\n""")
-                # 下载天数据
-                df = yf.download(stock['symbol'], start=start, end=start, interval='1D', prepost=True, progress=False,
-                                 timeout=60)
-                for _, row in df.iterrows():
+
+                for _, row in df_1d.iterrows():
                     fout_1d.write(
                         f"""{stock['name']}\1{stock['cname']}\1{stock['symbol']}\1{stock['category']}\1{stock[
-                            'market']}\1{
-                        row['Open']}\1{row['High']}\1{row['Low']}\1{row['Close']}\1{row['Adj Close']}\1{row[
-                            'Volume']}\1{str(row.name)[0:10]}\n""")
+                            'market']}\1{row['Open']}\1{row['High']}\1{row['Low']}\1{row['Close']}\1{row[
+                            'Adj Close']}\1{row['Volume']}\1{str(row.name)[0:10]}\n""")
                 fout_1d.flush()
                 fout_1m.flush()
+
                 t2 = datetime.datetime.now()
                 logger.info(
                     f"{stock['symbol']} finish, use {(t2 - t1).total_seconds()} ,processing {j}/{len(total_stocks)}")
