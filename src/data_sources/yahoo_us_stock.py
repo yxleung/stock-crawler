@@ -44,7 +44,7 @@ def download(dt=None):
                         f"""{stock['symbol']}\1{row['Open']}\1{row['High']}\1{row['Low']}\1{row['Close']}\1{row[
                             'Adj Close']}\1{row['Volume']}\1{str(row.name)}\n""")
                 # 下载天数据
-                df = yf.download(stock['symbol'], start=start, end=end, interval='1D', prepost=True, progress=False,
+                df = yf.download(stock['symbol'], start=start, end=start, interval='1D', prepost=True, progress=False,
                                  timeout=60)
                 for _, row in df.iterrows():
                     fout_1d.write(
