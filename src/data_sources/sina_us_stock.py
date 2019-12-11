@@ -6,7 +6,6 @@ import random
 import string
 import datetime
 import requests
-import threading
 from tqdm import tqdm
 from src.config import logger
 
@@ -100,7 +99,7 @@ def main():
         return
 
     logger.info('start crawling.')
-    data_path = os.environ.get('DATA_PATH')
+    data_path = os.environ.get('SINA_DATA_PATH')
 
     dt = get_latest_update_time().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info(f'data dt:{dt}')
@@ -127,24 +126,6 @@ def main():
         f.write(dt)
 
     logger.info('finish crawling.')
-
-
-def daemon(do=False):
-    """定时器"""
-    now = datetime.datetime.now()
-    minute = int(now.strftime("%M"))
-    hour = int(now.strftime('%H'))
-    # 每天早上8点运行
-    if (hour == 8 and minute == 0) or do:
-        for _ in range(10):
-            try:
-                main()
-                break
-            except Exception as e:
-                logger.exception(e)
-                time.sleep(60 * 60)
-    timer = threading.Timer(60, daemon)
-    timer.start()
 
 
 if __name__ == '__main__':
