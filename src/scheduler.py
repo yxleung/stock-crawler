@@ -25,5 +25,5 @@ def daemon(do=False):
 
 
 def register():
-    # sina_main()
+    sina_main()
     yahoo_main()
