@@ -94,7 +94,7 @@ def main():
     # 判断是否在爬取时间
     now = datetime.datetime.now()
     hour = now.strftime('%H')
-    if hour <= '08' or hour >= '20':
+    if hour < '08' or hour >= '20':
         logger.info('当前不是美股爬取时间')
         return
 
