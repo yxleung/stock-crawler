@@ -7,4 +7,5 @@ docker run \
     -d \
     --restart=always \
     --dns 114.114.114.114 \
+    --dns 8.8.8.8 \
     yxleung/stock-crawler
